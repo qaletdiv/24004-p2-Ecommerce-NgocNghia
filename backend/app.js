@@ -10,7 +10,7 @@ const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
-const requestLoggerMiddleware = require('./middlewares/requestLogger.js');
+const requestLoggerMiddleware = require('./middlewares/requestLoger.js');
 const errorHandlerMiddleware = require('./middlewares/errorHandler.js'); 
 
 const config = require('./config/config.js');
@@ -33,10 +33,10 @@ app.use(errorHandlerMiddleware);
 
 db.sequelize.authenticate() 
     .then(() => {
-        console.log('Database connected...');
+        console.log('Kết nối cơ sở dữ liệu thành công');
     })
     .catch(err => {
-        console.error('Unable to connect to the database:', err);
+        console.error('Không thể kết nối cơ sở dữ liệu:', err);
     });
 
 app.listen(PORT, () => {

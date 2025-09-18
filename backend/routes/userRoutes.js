@@ -5,6 +5,20 @@ const { validateProfileUpdate } = require('../validators/userValidator');
 
 const router = express.Router();
 
+// GET all users with their profile
+router.get('/', async (req, res, next) => {
+    try {
+        const users = await User.findAll({
+            include: [{
+                model: Profile,
+                as: 'profile'
+            }]
+        });
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
+});
 // Get user profile
 router.get('/profile', authMiddleware, async (req, res, next) => {
     try {
