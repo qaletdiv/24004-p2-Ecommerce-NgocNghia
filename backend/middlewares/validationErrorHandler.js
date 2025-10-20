@@ -1,7 +1,11 @@
-function requestLoggerMiddleware(req,res,next) {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+const {validationResult} = require('express-validator');
+
+const handleValidationErrors = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     next();
 }
 
-
-module.exports = requestLoggerMiddleware;
+module.exports = handleValidationErrors;

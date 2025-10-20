@@ -4,31 +4,24 @@ dotenv.config();
 const express = require('express');
 const app = express();
 
-const authRoutes = require('./routes/authRoutes');
+const accountRoutes = require('./routes/accountRoutes');
 const userRoutes = require('./routes/userRoutes');
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
 
-const requestLoggerMiddleware = require('./middlewares/requestLoger.js');
-const errorHandlerMiddleware = require('./middlewares/errorHandler.js'); 
+const requestLoggerMiddleware = require('./middlewares/requestLogger.js');
+const errorHandlerMiddleware = require('./middlewares/errorHandler.js');
 
 const config = require('./config/config.js');
 const db = require('./models');
 
-const PORT = config.PORT || 3000;
 
-// Middleware to parse JSON requests
+const PORT = config.PORT || 3000;
 app.use(requestLoggerMiddleware);
 app.use(express.json());
 
-app.use ('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/payments', paymentRoutes);
+app.use('/api/account', accountRoutes);
+app.use ('/api/users', userRoutes);
 
-// Error handling middleware
+/// Error handling middleware
 app.use(errorHandlerMiddleware);
 
 db.sequelize.authenticate() 

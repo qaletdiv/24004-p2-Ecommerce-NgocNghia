@@ -1,14 +1,15 @@
 CREATE TABLE `account` (
   `account_id` integer PRIMARY KEY,
-  `user_email` varchar(255) UNIQUE,
-  `password` varchar(255)
+  `account_name` varchar(255) NOT NULL,
+  `user_email` varchar(255) NOT NULL UNIQUE,
+  `password` varchar(255) NOT NULL,
 );
 
 CREATE TABLE `users` (
   `user_id` integer PRIMARY KEY,
   `account_id` integer NOT NULL,
-  `profile_user_image` varchar(255),
-  `user_full_name` varchar(255),
+  `profile_user_image` varchar(255) NOT NULL,
+  `user_full_name` varchar(255) NOT NULL,
   `DOB` timestamp,
   `gender` varchar(255),
   `phone_number` varchar(255),
@@ -112,17 +113,6 @@ INSERT INTO category (category_id, category_name) VALUES
 (4, 'DragonBall Figure'),
 (5, 'Other Figure');
 
--- Insert Account data
-INSERT INTO account (account_id, user_email, password) VALUES
-(1, 'Johnnguyen123456@gmail.com', 'Nghia123456'),
-(2, 'tommyhoang222@gmail.com', 'Hoang123'),
-(3, 'jimmyle2211@gmail.com', 'Jimmy123');
-
--- Insert Users data (using DATE function to ensure proper date format)
-INSERT INTO users (user_id, account_id, profile_user_image, user_full_name, DOB, gender, phone_number, home_address, office_address) VALUES
-(1, 1, 'https://www.meowbox.com/cdn/shop/articles/Screen_Shot_2024-03-15_at_10.53.41_AM.png?v=1710525250', 'John Nguyen', DATE('2002-03-13'), 'Male', '1234567890', '112 Anime Street, Apt 4B, Ho Chi Minh city, 70000, Vietnam', '456 Figure Store, District 1, Ho Chi Minh city, Vietnam'),
-(2, 2, 'https://media.tenor.com/t7_iTN0iYekAAAAe/sad-sad-cat.png', 'Tommy Hoang', DATE('2001-10-20'), 'Male', '12233567890', '112 Anime Street, Apt 4B, Ho Chi Minh city, 70000, Vietnam', '456 Figure Store, District 1, Ho Chi Minh city, Vietnam'),
-(3, 3, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREsV-5txah2vSdTlajysAhA8j84ULeoQ-e9w&s', 'Jimmy Le', DATE('1999-01-21'), 'Male', '12233267894', '112 Anime Street, Apt 4B, Ho Chi Minh city, 70000, Vietnam', '456 Figure Store, District 1, Ho Chi Minh city, Vietnam');
 
 -- Insert Products data (using CAST to ensure proper numeric type)
 INSERT INTO products (product_id, product_name, product_price, product_description, category_id) VALUES
@@ -156,14 +146,3 @@ INSERT INTO product_image (product_image_id, product_id, product_image_link) VAL
 (12, 122, 'https://animota.net/cdn/shop/files/00066820179_02.jpg?v=1705302250'),
 (13, 123, 'https://first4figures.com/cdn/shop/files/launchphoto_deku_resinstn-06.jpg?v=1725877020&width=640');
 
--- Create empty carts for each user
-INSERT INTO cart (cart_id, user_id, total_product_type) VALUES
-(1, 1, 0),
-(2, 2, 0),
-(3, 3, 0);
-
--- Optional: Add some sample payment methods (with dummy data - DO NOT use real card info)
-INSERT INTO payment (card_id, user_id, card_name, card_number, card_password, card_code) VALUES
-(1, 1, 'John Nguyen', '****-****-****-1234', 'hashed_password_123', '***'),
-(2, 2, 'Tommy Hoang', '****-****-****-5678', 'hashed_password_456', '***'),
-(3, 3, 'Jimmy Le', '****-****-****-9012', 'hashed_password_789', '***');

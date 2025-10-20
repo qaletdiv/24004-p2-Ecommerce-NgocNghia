@@ -1,42 +1,46 @@
-const jwt = require("jsonwebtoken");
-const { User } = require('../models')
+const jwt = require('jsonwebtoken');
+const {Account} = require('../models');
 
-const authenticationToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
+    /// Split Bearer token
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (token == null) {
-        return res.status(401).json({ message: 'Yeu cau token xac thuc' });
+    if(token == null) {
+        /// No token provided
+        return res.status(401).json({ message: 'No token provided' });
     }
 
+    /// Verify token
     jwt.verify(token, process.env.JWT_SECRET, async (err, decodedPayload) => {
-        if(err) {
-            if(err instanceof jwt.TokenExpiredError) {
-                return req.status(401).json({ message: "Tokeb het han" });
+        if (err) {
+            /// JWT expired or invalid
+            if (err instanceof jwt.TokenExpiredError) {
+                return res.status(401).json({ message: 'Token expired' });
             }
-
-            return res.status(403).json({ message: "Token khong hop le" });
+            return res.status(403).json({ message: 'Invalid token' });
         }
 
-        const userId = decodedPayload.userId;
-        if(!userId) {
-            return res.status(403).json({ message: 'Token khong hop le (thieu thong tin)' });
+        const accountId = decodedPayload.account_id;
+        if (!accountId) {
+            return res.status(403).json({ message: 'Invalid token payload' });
         }
 
+        /// Fetch account from database
         try {
-            const user = await User.findByPk(userId);
-            if(!user) {
-                return res.status(401).json({ message: "Xac thuc that bai (Nguoi dung khong ton tai)" });
+            const account = await Account.findByPk(accountId);
+            if (!account) {
+                return res.status(404).json({ message: 'Account not found' });
             }
 
-            req.user = user;
+            /// Attach account to request object
+            req.account = account;
             next();
-        } catch (dbError) {
-            console.error("Loi truy van nguoi dung trong authenticationToken:", dbError);
+        }
+        catch (dbError) {
+            console.error('Database error:', dbError);
             next(dbError);
         }
-
     })
 }
-
-module.exports = authenticationToken;
+module.exports = authenticateToken;
