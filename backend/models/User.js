@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     User.init({
+        user_id: {  // Add primary key definition
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         user_full_name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -31,11 +36,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        accountId: {
+        account_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'accounts',
+                model: 'account',
                 key: 'account_id'
             },
         }   

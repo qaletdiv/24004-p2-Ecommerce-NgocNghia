@@ -66,7 +66,7 @@ exports.login = async (req, res, next) => {
         
         /// Generate JWT token
         const payload = {
-            accountId: account.account_id,
+            account_id: account.account_id,
         }
 
         const secretKey = process.env.JWT_SECRET;
