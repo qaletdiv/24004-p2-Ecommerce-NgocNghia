@@ -11,6 +11,8 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 db.Account = require('./account')(sequelize, Sequelize);
 db.User = require('./user')(sequelize, Sequelize);
+db.Product = require('./products')(sequelize, Sequelize);
+db.Category = require('./category')(sequelize, Sequelize);
 
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
