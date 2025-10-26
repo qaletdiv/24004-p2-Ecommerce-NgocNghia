@@ -7,18 +7,23 @@ module.exports = (sequelize, DataTypes) => {
         static associate (models) {
             Category.hasMany(models.Product, {
                 foreignKey: 'category_id',
-                as: 'products'
+                as: 'product'
             });
         }
     }
     Category.init({
+        category_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         category_name: {
             type: DataTypes.STRING,
         }
     }, {
         sequelize,
-        modelname: 'Category',
-        table: 'category',
+        modelName: 'Category',
+        tableName: 'category',
         timestamps: false
     });
     return Category;

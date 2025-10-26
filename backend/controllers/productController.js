@@ -46,7 +46,7 @@ exports.updateProduct = async(req,res,next) => {
     try {
         const productId = req.params.product_id;
         const [updateRows] = await Product.update(req.body, {
-            where: {id: productId},
+            where: {product_id: productId},
         });
         /// No any rows is affected
         if (updateRows === 0) {
@@ -65,7 +65,7 @@ exports.deleteProduct = async (req,res,next) => {
     try{
         const productId = req.params.product_id;
         const deleteRows = await Product.destroy({
-            where: {id: productId},
+            where: {product_id: productId},
         });
         if (deletedRows === 0) {
             return res.status(404).json({message: 'Can not find the product to delete'});

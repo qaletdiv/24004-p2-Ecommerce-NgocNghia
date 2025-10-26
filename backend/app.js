@@ -6,6 +6,8 @@ const app = express();
 
 const accountRoutes = require('./routes/accountRoutes');
 const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 const requestLoggerMiddleware = require('./middlewares/requestLogger.js');
 const errorHandlerMiddleware = require('./middlewares/errorHandler.js');
@@ -20,7 +22,8 @@ app.use(express.json());
 
 app.use('/api/account', accountRoutes);
 app.use ('/api/users', userRoutes);
-
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
 /// Error handling middleware
 app.use(errorHandlerMiddleware);
 

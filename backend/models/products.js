@@ -13,14 +13,19 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     Product.init({
+        product_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         product_name: {
             type: DataTypes.STRING,
         },
         product_price: {
-            type: DataTypes.TEXT,
+            type: DataTypes.DOUBLE,
         },
         product_description: {
-            type: DataTypes.DOUBLE,
+            type: DataTypes.TEXT,
         },
         category_id: {
             type: DataTypes.INTEGER
@@ -28,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Product',
-        tablename: 'products',
+        tableName: 'products',
         timestamps: false
     });
     return Product;

@@ -45,7 +45,7 @@ exports.updateCategory = async(req,res,next) => {
     try {
         const categoryId = req.params.category_id;
         const [updateRows] = await Category.update(req.body, {
-            where: {id: categoryId},
+            where: {category_id: categoryId},
         });
         if (updateRows === 0) {
             return res.status(404).json({message: 'Can not find category to update'});
@@ -60,12 +60,12 @@ exports.deleteCategory = async(req,res,next) =>{
     try {
         const categoryId = req.params.category_id;
         const deletedRows = await Category.destroy({
-            where: {id: categoryId},
+            where: {category_id: categoryId},
         });
         if (deletedRows === 0) {
             return res.json(404).json({message: 'Can not find category to delete'});
         }
-        res.status(201).json({ message: 'product is sucessfully deleted'});
+        res.status(204).json({ message: 'product is sucessfully deleted'});
     }catch(error) {
         next(error);
     }
