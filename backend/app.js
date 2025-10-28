@@ -1,3 +1,8 @@
+/// security
+const helmet = require('helmet');
+
+/// Limit access
+const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -16,13 +21,27 @@ const errorHandlerMiddleware = require('./middlewares/errorHandler.js');
 
 const config = require('./config/config.js');
 const db = require('./models');
-
-
+const { maxHeaderSize } = require('http');
 const PORT = config.PORT || 3000;
+
 app.use(requestLoggerMiddleware);
-app.use(express.json());
+
+/// setup security
+app.use(helmet());
+const limiter = rateLimit({
+    /// limit IP to 100 request per window
+    max: 100,
+    windowMs: 15 * 60 * 1000,
+    message: "Too many request this IP, please try again in 15 minutes",
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use('/api', limiter);
 
 app.use(express.static(path.join(__dirname, 'images')));
+app.use(express.json());
+
 
 app.use('/api/account', accountRoutes);
 app.use ('/api/users', userRoutes);
