@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+const path = require('path');
 const express = require('express');
 const app = express();
 
@@ -20,6 +21,8 @@ const db = require('./models');
 const PORT = config.PORT || 3000;
 app.use(requestLoggerMiddleware);
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, 'images')));
 
 app.use('/api/account', accountRoutes);
 app.use ('/api/users', userRoutes);

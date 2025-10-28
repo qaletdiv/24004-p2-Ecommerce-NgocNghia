@@ -6,10 +6,10 @@ exports.updateProductImage = async (req,res,next) => {
     }
 
     try {
-        const productImagePath = `/uploads${req.file.processedFilename}`;
+        const productImagePath = `/uploads/${req.file.processedFilename}`;
         const updateProductImage = await ProductImage.update(
-            {productImage: productImagePath},
-            {where: {id: req.product.product_image_id}}
+            {product_image_link: productImagePath},
+            {where: {product_image_id: req.params.id}}
         )
         res.status(200).json ({
             message: "Product image updated successfully!",

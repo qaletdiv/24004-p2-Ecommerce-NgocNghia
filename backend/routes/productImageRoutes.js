@@ -13,7 +13,7 @@ router.get('/', async(req,res,next) => {
         const products = await Product.findAll({
             include: [{
                 model: ProductImage,
-                as: 'productImage'
+                as: 'productImages'
             }]
         });
         res.json(products);
@@ -22,7 +22,7 @@ router.get('/', async(req,res,next) => {
     }
 });
 
-router.patch('/update-product-image',
+router.patch('/update-product-image/:id',
     authenticationToken,
     uploadSingleImage('image'),
     resizeImage,

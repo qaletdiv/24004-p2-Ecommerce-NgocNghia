@@ -9,13 +9,13 @@ exports.resizeImage = async (req, res, next) => {
 
     const imageTempFilePath = req.file.path;
     try {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random * 1E9);
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
         const ext = '.jpeg'; ///Lấy phần đuôi hình (jpg, png,...)
         const finalFilename = `image-${uniqueSuffix}${ext}`;
 
         req.file.processedFilename = finalFilename;
 
-        const finalDirectory = path.join("..", "images", "uploads");
+        const finalDirectory = path.join(__dirname,"..", "images", "uploads");
         const finalFilePath = path.join(finalDirectory, finalFilename);
 
         await sharp(imageTempFilePath)
@@ -25,7 +25,7 @@ exports.resizeImage = async (req, res, next) => {
             .toFile(finalFilePath);
 
         /// Xoá file tạm
-        fs.unlinkSync(imageTempFilePath, (err) => {
+        fs.unlink(imageTempFilePath, (err) => {
             if (err) {
                 console.error('Error deleting temp file:', err);
             }else {
