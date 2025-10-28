@@ -237,12 +237,6 @@ function initializeFilters() {
             }
         });
 
-        // Optional: Real-time search (uncomment if desired)
-        // searchInput.addEventListener('input', function() {
-        //     currentFilters.searchTerm = this.value.trim();
-        //     saveFiltersToStorage();
-        //     renderProducts();
-        // });
     }
 
     // Initial render
@@ -250,13 +244,6 @@ function initializeFilters() {
     renderProducts();
 }
 
-// Pages functionality - Remove old static pagination
-// document.querySelectorAll('.pagination button').forEach(button => {
-//     button.addEventListener('click', function () {
-//         document.querySelector('.pagination button.active')?.classList.remove('active');
-//         this.classList.add('active');
-//     });
-// });
 
 /// See the product details 
 document.querySelectorAll('.product-card').forEach(card => {
