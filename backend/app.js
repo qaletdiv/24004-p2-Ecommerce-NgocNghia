@@ -8,6 +8,7 @@ const accountRoutes = require('./routes/accountRoutes');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const productImageRoutes = require('./routes/productImageRoutes.js');
 
 const requestLoggerMiddleware = require('./middlewares/requestLogger.js');
 const errorHandlerMiddleware = require('./middlewares/errorHandler.js');
@@ -24,6 +25,7 @@ app.use('/api/account', accountRoutes);
 app.use ('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/productImage', productImageRoutes);
 /// Error handling middleware
 app.use(errorHandlerMiddleware);
 
