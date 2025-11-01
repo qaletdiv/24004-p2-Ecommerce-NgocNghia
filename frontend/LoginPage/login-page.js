@@ -65,17 +65,24 @@ document.addEventListener('DOMContentLoaded', function() {
     signupPassword.addEventListener('input', validatePasswords);
     confirmPassword.addEventListener('input', validatePasswords);
     // Login form handler
-    document.getElementById('login-form-element').addEventListener('submit', function (e) {
+    document.getElementById('login-form-element').addEventListener('submit', async function (e) {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        // Get accounts from localStorage 
-        const storedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-        console.log('Stored accounts:', storedAccounts);
-        
-        const account = storedAccounts.find(acc => acc.email === email && acc.password === password);
-        console.log('Found account:', account);
+        const response = await fetch("http://localhost:3000/api/account/login",{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "user_email": email,
+                "password":password
+            })
+        });
+        const account = await response.json();
+        console.log(account);
+
 
         if (account) {
             localStorage.setItem('currentUser', JSON.stringify(account));
@@ -87,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Signup form handler
-    document.getElementById('signup-form').addEventListener('submit', function (e) {
+    document.getElementById('signup-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const name = document.getElementById('signupName').value;
         const email = document.getElementById('signupEmail').value;
@@ -112,6 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        const signupResponse = await fetch ("http://localhost:3000/api/account/register", {
+            method: 'POST', 
+              headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "user_email": email,
+                "password":password
+            })
+        });
+        const account = await response.json();
+        console.log(account);
         const storedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
         const existingAccount = storedAccounts.find(acc => acc.email === email);
 

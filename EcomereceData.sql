@@ -82,6 +82,12 @@ CREATE TABLE `transaction` (
   `transaction_date` date
 );
 
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id VARCHAR(128) COLLATE utf8mb4_bin NOT NULL PRIMARY KEY,
+    expires INT(11) UNSIGNED NOT NULL,
+    data MEDIUMTEXT COLLATE utf8mb4_bin
+);
+
 ALTER TABLE `users` ADD FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`);
 
 ALTER TABLE `payment` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
