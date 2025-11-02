@@ -4,7 +4,7 @@ const router = express.Router();
 const {registerValidationRules, loginValidationRules} = require('../validators/authValidator');
 const handleValidationErrors = require('../middlewares/validationErrorHandler');
 
-const {register, login, logout, getProfile} = require('../controllers/accountController');
+const {register, login, logout} = require('../controllers/accountController');
 const authenticationToken = require('../middlewares/authenticationToken');
 
 // Register route
@@ -23,8 +23,4 @@ router.get('/logout',
     logout
 );
 
-router.get('/getProfile',
-    authenticationToken,
-    getProfile
-);
 module.exports = router;

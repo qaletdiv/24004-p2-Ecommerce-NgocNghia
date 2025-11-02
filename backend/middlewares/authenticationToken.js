@@ -26,31 +26,28 @@ const authenticateToken = async (req, res, next) => {
             return res.status(403).json({ message: 'Invalid token payload' });
         }
 
-        if (req.session && req.session.account_id) {
         /// Fetch account from database
         try {
             const account = await Account.findByPk(accountId);
             if (!account) {
-                req.session.destroy(err => {
-                    if (err) {
-                        console.error("Error destroying invalid session", err);
-                    }
-                    res.status(401).json({message: "Unauthorized: Invalid session. Please login again"});
-                })
-            } else {
-                /// Attach account to request object
-                req.account = account;
-                next();
+                return res.status(401).json({message: "Unauthorized: Account not found"});
             }
+            
+            /// Attach both account object and account_id to request
+            req.account = account;
+            req.account_id = accountId;
+
+            if (req.session) {
+                req.session.account_id = accountId;
+            }
+            
+            next();
         }
         catch (error) {
             console.error("Server error during authentication", error);
             res.status(500).json({ message: "Server error during authentication" });
             next(error);
         }
-    } else {
-        res.status(401).json({message: "Unauthorized: Please login"});
-    }
     })
 }
 module.exports = authenticateToken;

@@ -1,10 +1,7 @@
 const express = require ('express');
 const router = express.Router();
+const {User, Account} = require('../models');
 
-router.get ('/set', (req,res) => {
-    req.session.views = (req.session.views) + 1;
-    req.session.userData = {account_name ,user_email};
-})
 router.get ('/get', (req,res) => {
     if (req.session.views) {
         console.log(req.session);

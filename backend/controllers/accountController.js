@@ -107,10 +107,3 @@ exports.logout = (req,res) => {
         res.json ({message: "No active session to logout"});
     }
 }
-
-exports.getProfile = async (req,res) => {
-    res.status(200).json({
-        message: "Welcome to profile",
-        account: req.account
-    })
-}

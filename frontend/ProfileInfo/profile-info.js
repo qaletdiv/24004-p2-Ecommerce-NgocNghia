@@ -363,7 +363,7 @@ function updateProfileDropdown() {
                 <li><a href="../ContactPage/contact-page.html">CONTACT</a></li>
                 <li><a href="../LoginPage/login-page.html" class="sign-in">SIGN IN</a></li>
             </ul>
-        `;
+        `;z
     }
 }
 

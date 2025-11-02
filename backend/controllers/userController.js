@@ -51,4 +51,28 @@ exports.updateUser = async (req, res, next) => {
     }
 };
 
-/// Update avatar later
+exports.getProfile = async (req, res, next) => {
+    try {
+        // req.account_id is set by authenticationToken middleware
+        // Find the user associated with this account
+        const user = await User.findOne({
+            where: { account_id: req.account_id },
+            attributes: ['user_id', 'user_full_name', 'DOB', 'gender', 'phone_number', 'home_address', 'office_address', 'profile_user_image'],
+            include: [{
+                model: Account,
+                as: 'account',
+                attributes: ['account_name', 'user_email']
+            }]
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User profile not found' });
+        }
+
+        res.status(200).json({
+            user: user
+        });
+    } catch (error) {
+        next(error);
+    }
+};
