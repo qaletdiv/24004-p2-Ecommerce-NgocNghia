@@ -40,18 +40,18 @@ window.switchToSignup = switchToSignup;
 window.switchToLogin = switchToLogin;
 
 // Handle form submissions
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     const signupPassword = document.getElementById('signupPassword');
     const confirmPassword = document.getElementById('confirmSignupPassword');
-    
+
     /// Confirm password
     function validatePasswords() {
         if (confirmPassword.value === '') {
             confirmPassword.style.borderColor = '#e1e5e9';
             return;
         }
-        
+
         if (signupPassword.value === confirmPassword.value) {
             confirmPassword.style.borderColor = '#28a745';
             confirmPassword.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmPassword.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
         }
     }
-    
+
     // Add event listeners for real-time validation
     signupPassword.addEventListener('input', validatePasswords);
     confirmPassword.addEventListener('input', validatePasswords);
@@ -70,26 +70,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        const response = await fetch("http://localhost:3000/api/account/login",{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "user_email": email,
-                "password":password
-            })
-        });
-        const account = await response.json();
-        console.log(account);
+        try {
+            const response = await fetch("http://localhost:3000/api/account/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "user_email": email,
+                    "password": password
+                })
+            });
+            const result = await response.json();
 
-
-        if (account) {
-            localStorage.setItem('currentUser', JSON.stringify(account));
-            console.log('Current user saved:', account);
-            window.location.href = '../index.html';
-        } else {
-            alert('Invalid email or password. Please try again.');
+            if (response.ok) {
+                alert('Login sucessfully');
+                // if (result.token) {
+                //     localStorage.setItem('authToken', result.token);
+                // }
+                window.location.href = '../index.html';
+            } else {
+                alert('Invalid email or password. Please try again.');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Error in login !!!');
         }
     });
 
@@ -119,14 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const signupResponse = await fetch ("http://localhost:3000/api/account/register", {
-            method: 'POST', 
-              headers: {
+        const signupResponse = await fetch("http://localhost:3000/api/account/register", {
+            method: 'POST',
+            headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 "user_email": email,
-                "password":password
+                "password": password
             })
         });
         const account = await response.json();
@@ -150,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('accounts', JSON.stringify(storedAccounts));
 
         localStorage.setItem('currentUser', JSON.stringify(newAccount));
-        
+
         alert(`Account created successfully! Welcome, ${name}!`);
         window.location.href = '../index.html';
     });
