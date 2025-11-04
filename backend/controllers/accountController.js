@@ -75,6 +75,9 @@ exports.login = async (req, res, next) => {
         /// Create token
         const token = jwt.sign(payload,secretKey, {expiresIn});
 
+        /// Save session
+        req.session.account_id = account.account_id;
+
         res.json ({
             message: 'Login successful',
             token,
@@ -87,5 +90,20 @@ exports.login = async (req, res, next) => {
         });
     } catch(error) {
         next(error);
+    }
+}
+
+exports.logout = (req,res) => {
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) {
+                console.error("Error Logout: ", err);
+                return res.status(500).send("Could not logout");
+            }
+            res.clearCookie('connect.sid');
+            res.json({message : "Logout succesfully!"});
+        })
+    } else {
+        res.json ({message: "No active session to logout"});
     }
 }

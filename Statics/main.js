@@ -1,5 +1,4 @@
 import { products } from './mock-data.js';
-import { accounts as defaultAccounts} from './mock-data.js';
 
 if (!localStorage.getItem('products')) {
     localStorage.setItem('products', JSON.stringify(products));
@@ -26,7 +25,7 @@ if (localAccounts.length === 0) {
         }
         return acc;
     });
-    
+
     if (accountsUpdated) {
         localStorage.setItem('accounts', JSON.stringify(localAccounts));
         console.log('Accounts updated with missing fields.');
@@ -34,34 +33,135 @@ if (localAccounts.length === 0) {
 }
 
 ///update profile image
-function updateProfileImage() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+async function updateProfileImage() {
     const profileLogo = document.querySelector('.profile-img');
 
     if (!profileLogo) return;
 
-    if (currentUser && currentUser.profileImg) {
-        profileLogo.src = currentUser.profileImg;
-        profileLogo.alt = `${currentUser.name}'s profile`;
-    } else {
+    const token = getAuthToken();
+
+    // Nếu không có token, dùng ảnh mặc định
+    if (!token) {
+        profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
+        profileLogo.alt = "Guest profile";
+        return;
+    }
+
+    try {
+        // Fetch user profile với token
+        const response = await fetch('http://localhost:3000/api/users/getProfile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.user) {
+            // Cập nhật localStorage với thông tin đầy đủ
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: data.user.user_id,
+                name: data.user.user_full_name,
+                email: data.user.account.user_email,
+                profileImg: data.user.profile_user_image,
+                DOB: data.user.DOB,
+                gender: data.user.gender,
+                phoneNumber: data.user.phone_number,
+                home: data.user.home_address,
+                office: data.user.office_address
+            }));
+
+            // Cập nhật ảnh profile
+            if (data.user.profile_user_image) {
+                profileLogo.src = data.user.profile_user_image;
+                profileLogo.alt = `${data.user.user_full_name}'s profile`;
+            } else {
+                profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
+                profileLogo.alt = `${data.user.user_full_name}'s profile`;
+            }
+        } else {
+            // Token không hợp lệ
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
+            profileLogo.alt = "Guest profile";
+        }
+    } catch (error) {
+        console.error('Error updating profile image:', error);
         profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
         profileLogo.alt = "Default profile";
     }
 }
 
+function getAuthToken () {
+    return localStorage.getItem('authToken');
+}
+
+function getAuthHeaders() {
+    const token = getAuthToken();
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return headers;
+}
+
 /// update menu dropdown
-function updateProfileDropdown() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+async function updateProfileDropdown() {
     const dropdown = document.getElementById('profile-dropdown');
 
     if (!dropdown) return;
+    const token = getAuthToken();
 
-    if (currentUser) {
+    if (!token) {
         dropdown.innerHTML = `
+        <ul>
+            <li><a href="../index.html">HOME</a></li>
+            <li><a href="../AboutPage/about-page.html">ABOUT</a></li>
+            <li><a href="../ShopPage/shop-page.html">SHOP</a></li>
+            <li><a href="../ContactPage/contact-page.html">CONTACT</a></li>
+            <li><a href="../LoginPage/login-page.html" class="sign-in">SIGN IN</a></li>
+        </ul>
+    `;
+        return;
+    }
+    try {
+        // fetch users profile
+        const response = await fetch('http://localhost:3000/api/users/getProfile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.user) {
+            /// CẬP NHẬT localStorage với thông tin user đầy đủ
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: data.user.user_id,
+                name: data.user.user_full_name,
+                email: data.user.account.user_email,
+                profileImg: data.user.profile_user_image,
+                DOB: data.user.DOB,
+                gender: data.user.gender,
+                phoneNumber: data.user.phone_number,
+                home: data.user.home_address,
+                office: data.user.office_address
+            }));
+
+            dropdown.innerHTML = `
             <ul>
                 <li class="user-greeting">
                     <a href="#" onclick="goToProfile()" style="color: #ffd700; font-weight: 600; font-size: 0.95rem; padding: 12px 20px; display: block; border-bottom: 1px solid rgba(255, 255, 255, 0.1); text-align: center; cursor: pointer;">
-                         ${currentUser.name}
+                        ${data.user.user_full_name}
                     </a>
                 </li>
                 <li><a href="../index.html">HOME</a></li>
@@ -71,8 +171,12 @@ function updateProfileDropdown() {
                 <li><a href="#" class="logout-btn" onclick="handleLogout()">LOGOUT</a></li>
             </ul>
         `;
-    } else {
-        dropdown.innerHTML = `
+        } else {
+            console.log('Token invalid or expired');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            
+            dropdown.innerHTML = `
             <ul>
                 <li><a href="../index.html">HOME</a></li>
                 <li><a href="../AboutPage/about-page.html">ABOUT</a></li>
@@ -80,7 +184,20 @@ function updateProfileDropdown() {
                 <li><a href="../ContactPage/contact-page.html">CONTACT</a></li>
                 <li><a href="../LoginPage/login-page.html" class="sign-in">SIGN IN</a></li>
             </ul>
-        `;
+            `;
+        }
+    } catch (error) {
+        console.error('Error updating dropdown:', error);
+        // Show guest menu on error
+        dropdown.innerHTML = `
+        <ul>
+            <li><a href="../index.html">HOME</a></li>
+            <li><a href="../AboutPage/about-page.html">ABOUT</a></li>
+            <li><a href="../ShopPage/shop-page.html">SHOP</a></li>
+            <li><a href="../ContactPage/contact-page.html">CONTACT</a></li>
+            <li><a href="../LoginPage/login-page.html" class="sign-in">SIGN IN</a></li>
+        </ul>
+    `;
     }
 }
 
@@ -99,7 +216,7 @@ function goToProfile() {
         }
         return;
     }
-    
+
     // Navigate to profile page based on current location
     const currentPath = window.location.pathname;
     if (currentPath.includes('/ProfileInfo/')) {
@@ -112,12 +229,28 @@ function goToProfile() {
 }
 
 /// Log out 
-function handleLogout() {
+async function handleLogout() {
+
+    try {
+        // Gọi API logout với token
+        const response = await fetch('http://localhost:3000/api/account/logout', {
+            method: 'GET',
+            headers: getAuthHeaders(), 
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            console.log('Logout successful');
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+    localStorage.removeItem('authToken');
     localStorage.removeItem('currentUser');
+
     updateProfileImage();
     updateProfileDropdown();
-    console.log('User logged out');
-    
+
     // Navigate to home page after logout based on current location
     const currentPath = window.location.pathname;
     if (currentPath.includes('index.html') || currentPath === '/') {
@@ -228,3 +361,5 @@ window.goToProfile = goToProfile;
 window.handleLogout = handleLogout;
 window.updateProfileDropdown = updateProfileDropdown;
 window.updateProfileImage = updateProfileImage;
+window.getAuthToken = getAuthToken;
+window.getAuthHeaders = getAuthHeaders;

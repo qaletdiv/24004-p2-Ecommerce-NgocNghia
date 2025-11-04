@@ -8,5 +8,7 @@ module.exports = {
         port: process.env.DB_PORT
     },
     test: {},
-    production: {}
+    production: {},
+    env: process.env.NODE_ENV || 'development',
+    sessionSecret: process.env.SESSION_SECRET
 }

@@ -30,16 +30,23 @@ const authenticateToken = async (req, res, next) => {
         try {
             const account = await Account.findByPk(accountId);
             if (!account) {
-                return res.status(404).json({ message: 'Account not found' });
+                return res.status(401).json({message: "Unauthorized: Account not found"});
             }
-
-            /// Attach account to request object
+            
+            /// Attach both account object and account_id to request
             req.account = account;
+            req.account_id = accountId;
+
+            if (req.session) {
+                req.session.account_id = accountId;
+            }
+            
             next();
         }
-        catch (dbError) {
-            console.error('Database error:', dbError);
-            next(dbError);
+        catch (error) {
+            console.error("Server error during authentication", error);
+            res.status(500).json({ message: "Server error during authentication" });
+            next(error);
         }
     })
 }

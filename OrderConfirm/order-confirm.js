@@ -1,5 +1,3 @@
-import { products } from '../Statics/mock-data.js';
-
 // Initialize variables
 let orderData = null;
 let currentUser = null;
