@@ -1,4 +1,3 @@
-import { products } from '../Statics/mock-data.js';
 
 // Initialize variables
 let checkoutData = null;

@@ -1,4 +1,3 @@
-import { products } from '../Statics/mock-data.js';
 
 const productId = parseInt(localStorage.getItem('selectedProduct'));
 

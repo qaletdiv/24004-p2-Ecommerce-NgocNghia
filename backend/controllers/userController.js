@@ -70,6 +70,7 @@ exports.getProfile = async (req, res, next) => {
         }
 
         res.status(200).json({
+            authenticated: true,
             user: user
         });
     } catch (error) {

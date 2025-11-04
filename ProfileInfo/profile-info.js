@@ -1,3 +1,15 @@
+        // Helper functions for order history
+    function getFromStorage(key, defaultValue = null) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch (error) {
+            console.error(`Error reading ${key} from localStorage:`, error);
+            return defaultValue;
+        }
+    }
+
+    
     // Function to get URL parameters
     function getURLParameter(name) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -368,18 +380,18 @@
         if (!dropdown) return;
         try {
             // Check session với backend
-            const response = await fetch('http://localhost:3000/api/session/check', {
+            const response = await fetch('http://localhost:3000/api/users/getProfile', {
                 method: 'GET',
             });
     
             const data = await response.json();
 
-        if (data.authenticated && data.account) {
+        if (data.authenticated && data.user) {
             dropdown.innerHTML = `
                 <ul>
                     <li class="user-greeting">
                         <a href="#" onclick="goToProfile()" style="color: #ffd700; font-weight: 600; font-size: 0.95rem; padding: 12px 20px; display: block; border-bottom: 1px solid rgba(255, 255, 255, 0.1); text-align: center; cursor: pointer;">
-                            ${data.account.account_name}
+                            ${data.user.user_full_name}
                         </a>
                     </li>
                     <li><a href="../index.html">HOME</a></li>
@@ -419,12 +431,12 @@
     async function goToProfile() {
         try {
             // Gọi API để check session có hợp lệ không
-            const response = await fetch('http://localhost:3000/api/session/check', {
+            const response = await fetch('http://localhost:3000/api/users/getProfile', {
                 method: 'GET',
             });
 
             const data = await response.json();
-            if (data.authenticated && data.account) {
+            if (data.authenticated && data.user) {
                 // Session hợp lệ, redirect đến profile
                 window.location.href = '../ProfileInfo/profile-info.html';
             } else {    
@@ -446,7 +458,6 @@
             });
     
         const data = await response.json();
-        localStorage.removeItem('currentUser');
         // updateProfileImage();
         // updateProfileDropdown();
         console.log('User logged out');
@@ -456,17 +467,6 @@
             // Still redirect even if API fails
             localStorage.removeItem('currentUser');
             window.location.href = '../index.html';
-        }
-    }
-
-    // Helper functions for order history
-    function getFromStorage(key, defaultValue = null) {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-        } catch (error) {
-            console.error(`Error reading ${key} from localStorage:`, error);
-            return defaultValue;
         }
     }
 

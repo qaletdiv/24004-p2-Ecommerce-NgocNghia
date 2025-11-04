@@ -1,6 +1,3 @@
-import { products } from '../Statics/mock-data.js';
-import { accounts as defaultAccounts } from '../Statics/mock-data.js';
-
 // Initialize variables
 let cart = [];
 let currentUser = null;
