@@ -77,3 +77,25 @@ exports.getProfile = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.updateUserAvatar = async (req,res,next) => {
+    if (!req.file || !req.file.processedFilename) {
+        return res.status(400).json({message: "Please upload an image file"});
+    }
+
+    try {
+        const avatarPath = `/userImages/${req.file.processedFilename}`;
+        const updateUser = await User.update(
+            {avatar: avatarPath},
+            {where: {id: req.user.user_id}}
+        )
+        res.status(200).json ({
+            message : "Avatar updated successfully",
+            data: {
+                avatarUrl: avatarPath
+            }
+        });
+    } catch(error) {
+        next(error);
+    }
+}

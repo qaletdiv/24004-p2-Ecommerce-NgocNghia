@@ -573,8 +573,21 @@ async function handleSaveProfile() {
 }
 
 // Handle image upload
-function handleImageUpload() {
-    alert('Image upload feature coming soon!');
+async function handleImageUpload() {
+    const profileImage = document.querySelector('.profile-img');
+    if (!profileImage) return;
+
+    const token = getAuthToken();
+    if (!token) {
+        profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
+        profileLogo.alt = "Guest profile";
+        window.location.href = '../LoginPage/login-page.html';
+        return;
+    }
+
+    try {
+        const response = await fetch ('');
+    }
 }
 
 // Dropdown toggle

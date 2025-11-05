@@ -3,9 +3,11 @@ const router = express.Router();
 const { User, Account } = require('../models');
 const handleValidationErrors = require('../middlewares/validationErrorHandler');
 const {commonIdParamValidation,createUserValidationRules,updateUserValidationRules} = require('../validators/userValidator');
-const { getUserById, updateUser,createUser, getProfile} = require('../controllers/userController');
+const { getUserById, updateUser,createUser, getProfile, updateUserAvatar} = require('../controllers/userController');
 
 const authenticationToken = require('../middlewares/authenticationToken');
+const {uploadSingleImage} = require('../middlewares/uploadMiddleware');
+const {resizeImage} = require('../middlewares/imageProcessing');
 
 router.get('/getProfile',
     authenticationToken,
@@ -32,7 +34,13 @@ router.put( '/:id',
     updateUserValidationRules(),
     handleValidationErrors,
     updateUser
+)
 
+router.patch('/update-my-avatar',
+    authenticationToken,
+    uploadSingleImage('avatar'),
+    resizeImage,
+    updateUserAvatar
 )
 
 module.exports = router;
