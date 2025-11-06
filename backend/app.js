@@ -11,9 +11,7 @@ const cors = require('cors');
 const app = express();
 app.use(cors({
     origin: 'http://127.0.0.1:5500',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    credentials: true
 }));
 const accountRoutes = require('./routes/accountRoutes');
 const userRoutes = require('./routes/userRoutes');

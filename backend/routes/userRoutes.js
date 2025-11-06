@@ -7,11 +7,18 @@ const { getUserById, updateUser,createUser, getProfile, updateUserAvatar} = requ
 
 const authenticationToken = require('../middlewares/authenticationToken');
 const {uploadSingleImage} = require('../middlewares/uploadMiddleware');
-const {resizeImage} = require('../middlewares/imageProcessing');
+const {resizeImage} = require('../middlewares/imageUserProcessing');
 
 router.get('/getProfile',
     authenticationToken,
     getProfile
+);
+
+router.patch('/update-my-avatar',
+    authenticationToken,
+    uploadSingleImage('profile_user_image'),
+    resizeImage,
+    updateUserAvatar
 );
 // Create user
 router.post('/',
@@ -36,11 +43,5 @@ router.put( '/:id',
     updateUser
 )
 
-router.patch('/update-my-avatar',
-    authenticationToken,
-    uploadSingleImage('avatar'),
-    resizeImage,
-    updateUserAvatar
-)
 
 module.exports = router;
