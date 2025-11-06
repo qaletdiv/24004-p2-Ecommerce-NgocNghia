@@ -96,7 +96,7 @@ exports.updateUserAvatar = async (req,res,next) => {
 
     try {
 
-        const avatarPath = `/userImages/${req.file.processedFilename}`;
+        const avatarPath = `/images/userImages/${req.file.processedFilename}`;
         const [updateRows] = await User.update(
             {profile_user_image: avatarPath},
             {where: {account_id: req.account_id}}

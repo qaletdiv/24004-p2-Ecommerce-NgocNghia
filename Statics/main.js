@@ -1,10 +1,23 @@
+// Backend URL configuration
+const BACKEND_URL = 'http://localhost:3000';
+
+    // Helper function to get full image URL
+    function getImageUrl(imagePath) {
+    if (!imagePath) {
+        return 'https://www.svgrepo.com/show/343494/profile-user-account.svg';
+    }
+    if (imagePath.startsWith('http')) {
+        return imagePath;
+    }
+    return `${BACKEND_URL}${imagePath}`;
+}
 /// Update profile image from backend
 async function updateProfileImage() {
     const profileLogo = document.querySelector('.profile-img');
     if (!profileLogo) return;
 
     const token = getAuthToken();
-
+    
     if (!token) {
         profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
         profileLogo.alt = "Guest profile";
@@ -21,10 +34,11 @@ async function updateProfileImage() {
         });
 
         const data = await response.json();
+        const user = data.user;
 
         if (response.ok && data.user) {
             if (data.user.profile_user_image) {
-                profileLogo.src = data.user.profile_user_image;
+                profileLogo.src = getImageUrl(user.profile_user_image);
                 profileLogo.alt = `${data.user.user_full_name}'s profile`;
             } else {
                 profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";

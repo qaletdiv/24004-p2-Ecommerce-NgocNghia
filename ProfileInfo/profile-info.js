@@ -1,3 +1,17 @@
+// Backend URL configuration
+const BACKEND_URL = 'http://localhost:3000';
+
+    // Helper function to get full image URL
+    function getImageUrl(imagePath) {
+    if (!imagePath) {
+        return 'https://www.svgrepo.com/show/343494/profile-user-account.svg';
+    }
+    if (imagePath.startsWith('http')) {
+        return imagePath;
+    }
+    return `${BACKEND_URL}${imagePath}`;
+}
+
 // Helper functions
 function getFromStorage(key, defaultValue = null) {
     try {
@@ -88,7 +102,7 @@ async function updateProfileImage() {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/users/getProfile', {
+        const response = await fetch(`${BACKEND_URL}/api/users/getProfile`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -99,13 +113,9 @@ async function updateProfileImage() {
         const data = await response.json();
 
         if (response.ok && data.user) {
-            if (data.user.profile_user_image) {
-                profileLogo.src = data.user.profile_user_image;
-                profileLogo.alt = `${data.user.user_full_name}'s profile`;
-            } else {
-                profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
-                profileLogo.alt = `${data.user.user_full_name}'s profile`;
-            }
+            // Use the helper function to get the correct image URL
+            profileLogo.src = getImageUrl(data.user.profile_user_image);
+            profileLogo.alt = `${data.user.user_full_name}'s profile`;
         } else {
             localStorage.removeItem('authToken');
             profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
@@ -139,7 +149,7 @@ async function updateProfileDropdown() {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/users/getProfile', {
+        const response = await fetch(`${BACKEND_URL}/api/users/getProfile`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -192,7 +202,7 @@ async function goToProfile() {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/users/getProfile', {
+        const response = await fetch(`${BACKEND_URL}/api/users/getProfile`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -219,7 +229,7 @@ async function handleLogout() {
 
     try {
         if (token) {
-            await fetch('http://localhost:3000/api/account/logout', {
+            await fetch(`${BACKEND_URL}/api/account/logout`, {
                 method: 'GET',
                 headers: getAuthHeaders(),
                 credentials: 'include'
@@ -246,7 +256,7 @@ async function updateProfileInformation() {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/users/getProfile', {
+        const response = await fetch(`${BACKEND_URL}/api/users/getProfile`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -265,6 +275,9 @@ async function updateProfileInformation() {
         const user = data.user;
         const account = user.account;
 
+        // Get proper image URL using helper function
+        const userImageUrl = getImageUrl(user.profile_user_image);
+
         profileContainer.innerHTML = `
             <!-- Sidebar -->
             <aside class="sidebar">
@@ -272,7 +285,7 @@ async function updateProfileInformation() {
                     <h1 class="profile-title">Profile</h1>
                     <div class="user-info">
                         <div class="user-avatar">
-                            <img src="${user.profile_user_image || 'https://www.svgrepo.com/show/343494/profile-user-account.svg'}" alt="${user.user_full_name || account.account_name}" class="main-image" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
+                            <img src="${userImageUrl}" alt="${user.user_full_name || account.account_name}" class="main-image" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
                         </div>
                         <div class="user-details">
                             <h3>Hello</h3>
@@ -324,7 +337,7 @@ async function updateProfileInformation() {
                     <div class="profile-content">
                         <div class="profile-image-section">
                             <div class="profile-image">
-                                <img src="${user.profile_user_image || 'https://www.svgrepo.com/show/343494/profile-user-account.svg'}" alt="${user.user_full_name || account.account_name}" class="main-image" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+                                <img src="${userImageUrl}" alt="${user.user_full_name || account.account_name}" class="main-image" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
                                 <div class="edit-icon" onclick="handleImageUpload()">
                                     <i class="fa-solid fa-edit"></i>
                                 </div>
@@ -514,7 +527,7 @@ async function handleSaveProfile() {
 
     try {
         // Get user ID first
-        const profileResponse = await fetch('http://localhost:3000/api/users/getProfile', {
+        const profileResponse = await fetch(`${BACKEND_URL}/api/users/getProfile`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -531,7 +544,7 @@ async function handleSaveProfile() {
         const userId = profileData.user.user_id;
 
         // Update user information
-        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+        const response = await fetch(`${BACKEND_URL}/api/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -572,23 +585,75 @@ async function handleSaveProfile() {
     }
 }
 
-// Handle image upload
-async function handleImageUpload() {
-    const profileImage = document.querySelector('.profile-img');
-    if (!profileImage) return;
+// // Handle image upload
+// async function handleImageUpload() {
+//     // Create file input element
+//     const input = document.createElement('input');
+//     input.type = 'file';
+//     input.accept = 'image/*';
+    
+//     input.onchange = async (e) => {
+//         const file = e.target.files[0];
+//         if (!file) return;
 
-    const token = getAuthToken();
-    if (!token) {
-        profileLogo.src = "https://www.svgrepo.com/show/343494/profile-user-account.svg";
-        profileLogo.alt = "Guest profile";
-        window.location.href = '../LoginPage/login-page.html';
-        return;
-    }
+//         const token = getAuthToken();
+//         if (!token) {
+//             alert('Please login again');
+//             window.location.href = '../LoginPage/login-page.html';
+//             return;
+//         }
 
-    try {
-        const response = await fetch ('');
-    }
-}
+//         try {
+//             // Get user ID first
+//             const profileResponse = await fetch(`${BACKEND_URL}/api/users/getProfile`, {
+//                 method: 'GET',
+//                 headers: {
+//                     'Authorization': `Bearer ${token}`
+//                 },
+//                 credentials: 'include'
+//             });
+
+//             const profileData = await profileResponse.json();
+//             if (!profileData.user) {
+//                 alert('Unable to load user profile');
+//                 return;
+//             }
+
+//             const userId = profileData.user.user_id;
+
+//             // Create FormData for image upload
+//             const formData = new FormData();
+//             formData.append('image', file);
+
+//             // Upload image
+//             const response = await fetch(`${BACKEND_URL}/api/users/${userId}/uploadImage`, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Authorization': `Bearer ${token}`
+//                 },
+//                 credentials: 'include',
+//                 body: formData
+//             });
+
+//             const result = await response.json();
+
+//             if (response.ok) {
+//                 alert('Profile image updated successfully!');
+//                 // Reload profile data to show new image
+//                 await updateProfileInformation();
+//                 await updateProfileImage();
+//             } else {
+//                 alert(result.message || 'Failed to upload image');
+//             }
+//         } catch (error) {
+//             console.error('Error uploading image:', error);
+//             alert('Error uploading image. Please try again.');
+//         }
+//     };
+
+//     // Trigger file selection
+//     input.click();
+// }
 
 // Dropdown toggle
 function toggleDropdown() {
@@ -669,3 +734,4 @@ window.handleSaveProfile = handleSaveProfile;
 window.handleImageUpload = handleImageUpload;
 window.switchToTab = switchToTab;
 window.updateCartBadge = updateCartBadge;
+window.getImageUrl = getImageUrl;
