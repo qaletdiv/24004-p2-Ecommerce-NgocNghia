@@ -144,16 +144,7 @@
     </footer>
 
     <script>
-        function getProductsFromStorage() {
-            try {
-                const products = localStorage.getItem('products');
-                return products ? JSON.parse(products) : [];
-            } catch (error) {
-                console.error('Error reading products from localStorage:', error);
-                return [];
-            }
-        }
-
+     
         // Filter premium products (high-priced items)
         function getPremiumProducts() {
             const allProducts = getProductsFromStorage();
