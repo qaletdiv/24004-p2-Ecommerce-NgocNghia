@@ -234,9 +234,9 @@ function getFromStorage(key, defaultValue = null) {
 }
 
 // Cart functions (still use localStorage for cart data)
-function getCartFromStorage() {
-    return getFromStorage('cart', []);
-}
+// function getCartFromStorage() {
+//     return getFromStorage('cart', []);
+// }
 
 function updateCartBadge() {
     const cartIcon = document.querySelector('.cart-icon');
