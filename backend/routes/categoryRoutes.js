@@ -10,7 +10,6 @@ const authenticationToken = require('../middlewares/authenticationToken');
 
 // Get all categories
 router.get('/',
-    authenticationToken,
     getAllCategories
 );
 

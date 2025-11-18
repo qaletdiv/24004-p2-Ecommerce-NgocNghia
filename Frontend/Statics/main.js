@@ -307,7 +307,6 @@ document.addEventListener('DOMContentLoaded', function () {
 window.updateCartBadge = updateCartBadge;
 window.refreshCartBadge = refreshCartBadge;
 window.triggerCartUpdate = triggerCartUpdate;
-window.getCartFromStorage = getCartFromStorage;
 window.goToProfile = goToProfile;
 window.handleLogout = handleLogout;
 window.updateProfileDropdown = updateProfileDropdown;
