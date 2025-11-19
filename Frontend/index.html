@@ -161,10 +161,9 @@
             price: `${product.product_price.toLocaleString('vi-VN')}₫`,
             priceRaw: product.product_price,
             description: product.product_description,
-            category: product.category_name,
+            category: product.category?.category_name,
             image: product.productImages?.[0]?.product_image_link || "placeholder.jpg"
         }));
-
     } catch (err) {
         console.error("Error loading product:", err);
         return [];

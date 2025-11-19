@@ -1,11 +1,11 @@
 // shop-page.js - Updated with filter functionality using localStorage
 
 // Filter state management
-var currentFilters = {
-    category: 'all',
-    priceRange: 'all',
-    searchTerm: ''
-};
+// var currentFilters = {
+//     category: 'all',
+//     priceRange: 'all',
+//     searchTerm: ''
+// };
 
 // Pagination state
 var currentPage = 1;
@@ -27,40 +27,40 @@ document.addEventListener('click', function (event) {
 });
 
 // Load filters from localStorage
-function loadFiltersFromStorage() {
-    const savedFilters = localStorage.getItem('shopFilters');
-    if (savedFilters) {
-        try {
-            currentFilters = { ...currentFilters, ...JSON.parse(savedFilters) };
-        } catch (error) {
-            console.error('Error loading filters from storage:', error);
-        }
-    }
+// function loadFiltersFromStorage() {
+//     const savedFilters = localStorage.getItem('shopFilters');
+//     if (savedFilters) {
+//         try {
+//             currentFilters = { ...currentFilters, ...JSON.parse(savedFilters) };
+//         } catch (error) {
+//             console.error('Error loading filters from storage:', error);
+//         }
+//     }
 
-    // Load saved page
-    const savedPage = localStorage.getItem('currentPage');
-    if (savedPage) {
-        currentPage = parseInt(savedPage) || 1;
-    }
-}
+//     // Load saved page
+//     const savedPage = localStorage.getItem('currentPage');
+//     if (savedPage) {
+//         currentPage = parseInt(savedPage) || 1;
+//     }
+// }
 
 // Save pagination state
-function savePaginationToStorage() {
-    try {
-        localStorage.setItem('currentPage', currentPage.toString());
-    } catch (error) {
-        console.error('Error saving page to storage:', error);
-    }
-}
+// function savePaginationToStorage() {
+//     try {
+//         localStorage.setItem('currentPage', currentPage.toString());
+//     } catch (error) {
+//         console.error('Error saving page to storage:', error);
+//     }
+// }
 
-// Save filters to localStorage
-function saveFiltersToStorage() {
-    try {
-        localStorage.setItem('shopFilters', JSON.stringify(currentFilters));
-    } catch (error) {
-        console.error('Error saving filters to storage:', error);
-    }
-}
+// // Save filters to localStorage
+// function saveFiltersToStorage() {
+//     try {
+//         localStorage.setItem('shopFilters', JSON.stringify(currentFilters));
+//     } catch (error) {
+//         console.error('Error saving filters to storage:', error);
+//     }
+// }
 
 // Get products from localStorage
 function getProductsFromStorage() {
