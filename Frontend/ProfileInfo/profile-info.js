@@ -1,8 +1,8 @@
 // Backend URL configuration
 const BACKEND_URL = 'http://localhost:3000';
 
-    // Helper function to get full image URL
-    function getImageUrl(imagePath) {
+// Helper function to get full image URL
+function getImageUrl(imagePath) {
     if (!imagePath) {
         return 'https://www.svgrepo.com/show/343494/profile-user-account.svg';
     }
@@ -32,11 +32,11 @@ function getAuthHeaders() {
     const headers = {
         'Content-Type': 'application/json'
     };
-    
+
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     return headers;
 }
 
@@ -50,10 +50,10 @@ function getURLParameter(name) {
 function switchToTab(tabName) {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    
+
     const targetNavLink = document.querySelector(`.nav-link[data-tab="${tabName}"]`);
     const targetTabContent = document.getElementById(tabName);
-    
+
     if (targetNavLink && targetTabContent) {
         targetNavLink.classList.add('active');
         targetTabContent.classList.add('active');
@@ -65,12 +65,12 @@ function switchToTab(tabName) {
 
 function initializeTabSwitching() {
     document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
-            
+
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
+
             this.classList.add('active');
             const tabId = this.getAttribute('data-tab');
             const tabContent = document.getElementById(tabId);
@@ -79,7 +79,7 @@ function initializeTabSwitching() {
             }
         });
     });
-    
+
     const tabParam = getURLParameter('tab');
     if (tabParam) {
         setTimeout(() => {
@@ -194,7 +194,7 @@ async function updateProfileDropdown() {
 // Navigate to profile
 async function goToProfile() {
     const token = getAuthToken();
-    
+
     if (!token) {
         alert('Please login to view your profile');
         window.location.href = '../LoginPage/login-page.html';
@@ -433,27 +433,148 @@ async function updateProfileInformation() {
                     </div>
                 </div>
 
+                 <!-- Returns Tab -->
+            <div id="returns" class="tab-content">
+                <div class="content-header">
+                    <h2 class="content-title">Returns & Cancellations</h2>
+                </div>
+                <div class="empty-state">
+                    <i class="fa-solid fa-undo"></i>
+                    <h3>No returns or cancellations</h3>
+                    <p>Your return requests will appear here</p>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div id="reviews" class="tab-content">
+                <div class="content-header">
+                    <h2 class="content-title">My Reviews</h2>
+                </div>
+                <div class="empty-state">
+                    <i class="fa-solid fa-star"></i>
+                    <h3>No reviews yet</h3>
+                    <p>Your product reviews will appear here</p>
+                </div>
+            </div>
+
+            <!-- Wishlist Tab -->
+            <div id="wishlist" class="tab-content">
+                <div class="content-header">
+                    <h2 class="content-title">My Wishlist</h2>
+                </div>
+                <div class="empty-state">
+                    <i class="fa-solid fa-heart"></i>
+                    <h3>Your wishlist is empty</h3>
+                    <p>Save figures you love for later</p>
+                </div>
+            </div>
+
+            <!-- Payment Tab -->
+            <div id="payment" class="tab-content">
+                <div class="content-header">
+                    <h2 class="content-title">Payment Methods</h2>
+                    <button class="add-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        Add Payment Method
+                    </button>
+                </div>
+                <div class="empty-state">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <h3>No payment methods</h3>
+                    <p>Add your payment methods for faster checkout</p>
+                </div>
+            </div>
+
+
                 <!-- Notifications Tab -->
-                <div id="notifications" class="tab-content">
-                    <div class="content-header">
-                        <h2 class="content-title">Notification Preferences</h2>
-                    </div>
-                    <div style="padding: 20px 0;">
-                        <div class="form-group">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <div>
-                                    <h4 style="color: #333; margin-bottom: 5px;">Email Notifications</h4>
-                                    <p style="color: #666; font-size: 14px;">Get notified about orders, promotions, and updates</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
+            <div id="notifications" class="tab-content">
+                <div class="content-header">
+                    <h2 class="content-title">Notification Preferences</h2>
+                </div>
+
+                <div style="padding: 20px 0;">
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #333; margin-bottom: 5px;">Email Notifications</h4>
+                                <p style="color: #666; font-size: 14px;">Get notified about orders, promotions, and updates</p>
                             </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #333; margin-bottom: 5px;">SMS Notifications</h4>
+                                <p style="color: #666; font-size: 14px;">Receive text messages for order updates</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #333; margin-bottom: 5px;">Push Notifications</h4>
+                                <p style="color: #090909ff; font-size: 14px;">Get browser notifications for important updates</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #333; margin-bottom: 5px;">Marketing Communications</h4>
+                                <p style="color: #666; font-size: 14px;">Receive promotional offers and new product announcements</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #333; margin-bottom: 5px;">Order Updates</h4>
+                                <p style="color: #666; font-size: 14px;">Get notified when your order status changes</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #333; margin-bottom: 5px;">Wishlist Alerts</h4>
+                                <p style="color: #666; font-size: 14px;">Get notified when wishlist items go on sale</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="button" class="save-btn">Save Preferences</button>
                 </div>
-            </main>
+            </div>
+        </main>
         `;
 
         // Initialize gender selection
@@ -471,7 +592,7 @@ function handleEditProfile() {
     const inputs = document.querySelectorAll('#account .form-input');
     const saveBtn = document.querySelector('#account .save-btn');
     const changeBtn = document.querySelector('.change-info-btn');
-    
+
     if (changeBtn.textContent.includes('Change')) {
         inputs.forEach(input => {
             if (input.type !== 'email') {
@@ -495,7 +616,7 @@ function handleEditProfile() {
 // Setup gender selection
 function setupGenderSelection() {
     document.querySelectorAll('.gender-option').forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function () {
             const saveBtn = document.querySelector('#account .save-btn');
             if (saveBtn && window.getComputedStyle(saveBtn).display === 'none') {
                 return; // Not in edit mode
@@ -563,17 +684,17 @@ async function handleSaveProfile() {
 
         if (response.ok) {
             alert('Profile updated successfully!');
-            
+
             // Reset form to readonly state
             const inputs = document.querySelectorAll('#account .form-input');
             inputs.forEach(input => {
                 input.setAttribute('readonly', true);
                 input.style.background = '#f8f9fa';
             });
-            
+
             document.querySelector('#account .save-btn').style.display = 'none';
             document.querySelector('.change-info-btn').innerHTML = '<i class="fa-solid fa-edit"></i> Change Profile Information';
-            
+
             // Reload profile data
             await updateProfileInformation();
         } else {
@@ -591,7 +712,7 @@ async function handleSaveProfile() {
 //     const input = document.createElement('input');
 //     input.type = 'file';
 //     input.accept = 'image/*';
-    
+
 //     input.onchange = async (e) => {
 //         const file = e.target.files[0];
 //         if (!file) return;
@@ -661,10 +782,10 @@ function toggleDropdown() {
     dropdown.classList.toggle('show');
 }
 
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     const dropdown = document.getElementById('profile-dropdown');
     const profileImg = document.querySelector('.profile-img');
-    
+
     if (dropdown && profileImg && !dropdown.contains(event.target) && !profileImg.contains(event.target)) {
         dropdown.classList.remove('show');
     }
@@ -717,7 +838,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProfileDropdown();
     updateProfileInformation();
     updateCartBadge();
-    
+
     setTimeout(() => {
         initializeTabSwitching();
     }, 200);

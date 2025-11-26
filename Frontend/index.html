@@ -333,12 +333,6 @@
             }, 100);
         });
 
-        // Keep existing functions
-        function toggleDropdown() {
-            const dropdown = document.getElementById('profile-dropdown');
-            dropdown.classList.toggle('show');
-        }
-
         function goToCartPage() {
             window.location.href = './CartPage/cart-page.html';
         }
@@ -353,8 +347,6 @@
             }
         });
 
-        // Make functions available globally
-        window.toggleDropdown = toggleDropdown;
         window.goToCartPage = goToCartPage;
         window.performSearch = performSearch;
         window.renderPremiumProducts = renderPremiumProducts;

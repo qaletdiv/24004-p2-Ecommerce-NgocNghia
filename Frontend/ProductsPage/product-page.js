@@ -1,11 +1,10 @@
-
 const productId = parseInt(localStorage.getItem('selectedProduct'));
+const BACKEND_URL = 'http://localhost:3000';
 
 let currentProduct = null;
 let currentQuantity = 1;
 let cart = [];
-
-// Helper functions for localStorage management
+/// helper function
 function getFromStorage(key, defaultValue = null) {
     try {
         const item = localStorage.getItem(key);
@@ -16,13 +15,15 @@ function getFromStorage(key, defaultValue = null) {
     }
 }
 
-function setToStorage(key, value) {
-    try {
-        localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error(`Error saving ${key} to localStorage:`, error);
-    }
-}
+
+
+// function setToStorage(key, value) {
+//     try {
+//         localStorage.setItem(key, JSON.stringify(value));
+//     } catch (error) {
+//         console.error(`Error saving ${key} to localStorage:`, error);
+//     }
+// }
 
 // Initialize cart data
 function initializeCart() {
@@ -221,8 +222,11 @@ function showNotification(message, type = 'success') {
     }, 3000);
 }
 
-function loadProduct(productId) {
+
+async function loadProduct(productId) {
     const container = document.getElementById('product-container');
+
+
     
     if (!productId || !container) {
         if (container) {

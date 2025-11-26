@@ -282,6 +282,11 @@ function triggerCartUpdate() {
     const event = new CustomEvent('cartUpdated');
     window.dispatchEvent(event);
 }
+ // Keep existing functions
+function toggleDropdown() {
+    const dropdown = document.getElementById('profile-dropdown');
+    dropdown.classList.toggle('show');
+}
 
 // Event listeners
 window.addEventListener('storage', function (e) {
@@ -294,6 +299,7 @@ window.addEventListener('cartUpdated', function () {
     updateCartBadge();
 });
 
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => {
@@ -304,6 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Make functions global
+window.toggleDropdown = toggleDropdown;
 window.updateCartBadge = updateCartBadge;
 window.refreshCartBadge = refreshCartBadge;
 window.triggerCartUpdate = triggerCartUpdate;
