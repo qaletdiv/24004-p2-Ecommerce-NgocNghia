@@ -63,15 +63,15 @@ document.addEventListener('click', function (event) {
 // }
 
 // Get products from localStorage
-function getProductsFromStorage() {
-    try {
-        const storedProducts = localStorage.getItem('products');
-        return storedProducts ? JSON.parse(storedProducts) : [];
-    } catch (error) {
-        console.error('Error loading products from storage:', error);
-        return [];
-    }
-}
+// function getProductsFromStorage() {
+//     try {
+//         const storedProducts = localStorage.getItem('products');
+//         return storedProducts ? JSON.parse(storedProducts) : [];
+//     } catch (error) {
+//         console.error('Error loading products from storage:', error);
+//         return [];
+//     }
+// }
 
 // Filter products based on current filters
 function filterProducts() {
@@ -782,7 +782,7 @@ window.updateCartBadge = updateCartBadge;
 window.refreshCartBadge = refreshCartBadge;
 window.triggerCartUpdate = triggerCartUpdate;
 window.getCartFromStorage = getCartFromStorage;
-window.goToProfile = goToProfile;
+// window.goToProfile = goToProfile;
 window.handleLogout = handleLogout;
 window.updateProfileDropdown = updateProfileDropdown;
 window.updateProfileImage = updateProfileImage;

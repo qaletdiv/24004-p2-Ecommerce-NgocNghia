@@ -4,6 +4,8 @@ const BACKEND_URL = 'http://localhost:3000';
 let currentProduct = null;
 let currentQuantity = 1;
 let cart = [];
+
+
 /// helper function
 function getFromStorage(key, defaultValue = null) {
     try {
@@ -13,6 +15,10 @@ function getFromStorage(key, defaultValue = null) {
         console.error(`Error reading ${key} from localStorage:`, error);
         return defaultValue;
     }
+}
+
+function getAuthToken() {
+    return localStorage.getItem('authToken');
 }
 
 
@@ -225,7 +231,11 @@ function showNotification(message, type = 'success') {
 
 async function loadProduct(productId) {
     const container = document.getElementById('product-container');
+    try {
+        
+    } catch(error) {
 
+    }
 
     
     if (!productId || !container) {
