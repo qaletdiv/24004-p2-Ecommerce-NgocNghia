@@ -63,7 +63,7 @@
         <!-- Featured Premium Products Section -->
         <section class="featured-section">
             <div class="products-grid" id="premium-products-grid">
-                <!-- Premium products will be loaded here -->
+                <p class="loading-message">Loading products...</p>
             </div>
             <div class="view-all-container">
                 <button class="view-all-btn"><a href="../ShopPage/shop-page.html">VIEW ALL PRODUCTS</a></button>
@@ -71,7 +71,7 @@
         </section>
 
         <hr>
-        
+
         <section class="feedback-section">
             <h2 class="feedback-title">WHAT OUR CUSTOMERS SAY</h2>
             <div class="feedback-grid">
@@ -144,42 +144,51 @@
     </footer>
 
     <script>
-        function getProductsFromStorage() {
-            try {
-                const products = localStorage.getItem('products');
-                return products ? JSON.parse(products) : [];
-            } catch (error) {
-                console.error('Error reading products from localStorage:', error);
-                return [];
-            }
-        }
+        const BACKEND_URL = 'http://localhost:3000';
+
+        // Global variable to store all products
+        let allProducts = [];
+
+        // Fetch products from database
+        async function getProductFromDB() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/productImage`);
+        const products = await response.json();
+
+        return products.map(product => ({
+            id: product.product_id,
+            name: product.product_name,
+            price: `${product.product_price.toLocaleString('vi-VN')}₫`,
+            priceRaw: product.product_price,
+            description: product.product_description,
+            category: product.category?.category_name,
+            image: product.productImages?.[0]?.product_image_link || "placeholder.jpg"
+        }));
+    } catch (err) {
+        console.error("Error loading product:", err);
+        return [];
+    }
+}
+
 
         // Filter premium products (high-priced items)
-        function getPremiumProducts() {
-            const allProducts = getProductsFromStorage();
-            
-            // Define premium criteria - products with price > 5,000,000₫ or specific high-end models
-            const premiumProducts = allProducts.filter(product => {
-                const priceString = product.price.replace(/[^\d]/g, ''); // Remove non-numeric characters
-                const price = parseInt(priceString);
-                return price >= 5000000; // 5 million VND or more
+        function getPremiumProducts(products) {
+            // Define premium criteria - products with price >= 5,000,000₫
+            const premiumProducts = products.filter(product => {
+                return product.priceRaw >= 5000000; // 5 million VND or more
             });
 
             // Sort by price (highest first) and take top 6
             return premiumProducts
-                .sort((a, b) => {
-                    const priceA = parseInt(a.price.replace(/[^\d]/g, ''));
-                    const priceB = parseInt(b.price.replace(/[^\d]/g, ''));
-                    return priceB - priceA;
-                })
+                .sort((a, b) => b.priceRaw - a.priceRaw)
                 .slice(0, 6);
         }
 
         // Create product card HTML
-        function createProductCard(product) {
+        function createProductCard(product, isPremium = false) {
             return `
-                <div class="product-card premium-card" data-product-id="${product.id}" data-name="${product.name.toLowerCase()}">
-                    <div class="premium-badge">HOT</div>
+                <div class="product-card ${isPremium ? 'premium-card' : ''}" data-product-id="${product.id}" data-name="${product.name.toLowerCase()}">
+                    ${isPremium ? '<div class="premium-badge">HOT</div>' : ''}
                     <img src="${product.image}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <h3 class="product-name">${product.name}</h3>
@@ -191,16 +200,25 @@
         }
 
         // Render premium products to the grid
-        function renderPremiumProducts() {
+        async function renderPremiumProducts() {
             const premiumGrid = document.getElementById('premium-products-grid');
-            const premiumProducts = getPremiumProducts();
+
+            // Show loading state
+            premiumGrid.innerHTML = '<p class="loading-message">Loading products...</p>';
+
+            // Fetch products if not already loaded
+            if (allProducts.length === 0) {
+                allProducts = await getProductFromDB();
+            }
+
+            const premiumProducts = getPremiumProducts(allProducts);
 
             if (premiumProducts.length === 0) {
                 premiumGrid.innerHTML = '<p class="no-products">No premium products found.</p>';
                 return;
             }
 
-            premiumGrid.innerHTML = premiumProducts.map(product => createProductCard(product)).join('');
+            premiumGrid.innerHTML = premiumProducts.map(product => createProductCard(product, true)).join('');
 
             // Re-attach click events to product cards
             attachProductCardEvents();
@@ -218,19 +236,23 @@
             });
         }
 
-        // Search functionality - now searches through all products
-        function performSearch() {
+        // Search functionality - searches through all products
+        async function performSearch() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
+
             if (searchTerm === '') {
                 // If search is empty, show premium products
-                renderPremiumProducts();
+                await renderPremiumProducts();
                 document.getElementById('searchInfo').textContent = '';
                 return;
             }
 
+            // Ensure products are loaded
+            if (allProducts.length === 0) {
+                allProducts = await getProductFromDB();
+            }
+
             // Search through all products
-            const allProducts = getProductsFromStorage();
             const filteredProducts = allProducts.filter(product =>
                 product.name.toLowerCase().includes(searchTerm) ||
                 product.description.toLowerCase().includes(searchTerm) ||
@@ -253,16 +275,7 @@
             }
 
             // Create cards without premium badge for search results
-            premiumGrid.innerHTML = products.map(product => `
-                <div class="product-card" data-product-id="${product.id}" data-name="${product.name.toLowerCase()}">
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-price">${product.price}</p>
-                        <p class="product-category">${product.category}</p>
-                    </div>
-                </div>
-            `).join('');
+            premiumGrid.innerHTML = products.map(product => createProductCard(product, false)).join('');
 
             searchInfo.textContent = `Found ${products.length} product${products.length !== 1 ? 's' : ''} for "${searchTerm}"`;
             searchInfo.style.color = '#28a745';
@@ -271,27 +284,37 @@
             attachProductCardEvents();
         }
 
-        // Real-time search as user types
-        document.addEventListener('DOMContentLoaded', function () {
+        // Real-time search as user types (debounced)
+        let searchTimeout;
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch();
+            }, 300); // Wait 300ms after user stops typing
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function () {
             // Initial render of premium products
-            renderPremiumProducts();
+            await renderPremiumProducts();
 
             const searchInput = document.getElementById('searchInput');
 
-            // Real-time search
+            // Real-time search with debounce
             searchInput.addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase().trim();
                 if (searchTerm === '') {
                     renderPremiumProducts();
                     document.getElementById('searchInfo').textContent = '';
                 } else {
-                    performSearch();
+                    debounceSearch();
                 }
             });
 
             // Search on Enter key press
             searchInput.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
+                    clearTimeout(searchTimeout);
                     performSearch();
                 }
             });
@@ -304,19 +327,11 @@
                 }
             });
 
-            // Make sure other functions are available
             setTimeout(() => {
-                updateProfileImage();
-                updateProfileDropdown();
-                updateCartBadge();
+                if (typeof updateProfileImage === 'function') updateProfileImage();
+                if (typeof updateCartBadge === 'function') updateCartBadge();
             }, 100);
         });
-
-        // Keep existing functions
-        function toggleDropdown() {
-            const dropdown = document.getElementById('profile-dropdown');
-            dropdown.classList.toggle('show');
-        }
 
         function goToCartPage() {
             window.location.href = './CartPage/cart-page.html';
@@ -327,13 +342,11 @@
             const dropdown = document.getElementById('profile-dropdown');
             const profileImg = document.querySelector('.profile-img');
 
-            if (!dropdown.contains(event.target) && !profileImg.contains(event.target)) {
+            if (dropdown && profileImg && !dropdown.contains(event.target) && !profileImg.contains(event.target)) {
                 dropdown.classList.remove('show');
             }
         });
 
-        // Make functions available globally
-        window.toggleDropdown = toggleDropdown;
         window.goToCartPage = goToCartPage;
         window.performSearch = performSearch;
         window.renderPremiumProducts = renderPremiumProducts;

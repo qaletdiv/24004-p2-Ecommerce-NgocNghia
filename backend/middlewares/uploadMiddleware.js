@@ -30,4 +30,4 @@ const upload = multer({
     }
 })
 
-exports.uploadSingleImage = (fieldName = 'image') => upload.single(fieldName);
+exports.uploadSingleImage = (fieldName) => upload.single(fieldName);

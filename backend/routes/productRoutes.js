@@ -10,7 +10,6 @@ const authenticationToken = require('../middlewares/authenticationToken');
 
 // Get all products
 router.get('/',
-    authenticationToken,
     getAllProducts
 );
 

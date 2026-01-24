@@ -110,6 +110,7 @@ ALTER TABLE `product_image` ADD FOREIGN KEY (`product_id`) REFERENCES `products`
 
 ALTER TABLE `transaction` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
+ALTER TABLE users MODIFY DOB DATE;
 
 -- Insert Categories first
 INSERT INTO category (category_id, category_name) VALUES

@@ -9,12 +9,15 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
+// CORS configuration
 app.use(cors({
-    origin: 'http://127.0.0.1:5500',
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 const accountRoutes = require('./routes/accountRoutes');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -39,8 +42,12 @@ const PORT = config.PORT || 3000;
 
 app.use(requestLoggerMiddleware);
 
-/// setup security
-app.use(helmet());
+/// setup security with CORS configuration
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false
+}));
+
 const limiter = rateLimit({
     /// limit IP to 100 request per window
     max: 100,
@@ -51,7 +58,15 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
-app.use(express.static(path.join(__dirname, 'images')));
+
+// Serve static files with proper CORS headers
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+    setHeaders: (res, filePath) => {
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    }
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -124,7 +139,7 @@ app.get('/clear-cookie', (req,res) => {
 
     /// Clear cookie có thể thêm option để clear
     /* Sử dụng option phải bằng lúc set lúc set sao thì clear giống vậy 
-    Clear trong trường hợp path với domain là cự kì clear 
+    Clear trong trường hợp path với domain là cụ kì clear 
     */
      res.json ({
         message: "Clear Cookies"
